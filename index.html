@@ -3,55 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Embodied AI Soft Robotics Rehab Dashboard</title>
-<script src="https://template.ams3.digitaloceanspaces.com/three.min.js" onerror="this.onerror=null;this.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';"></script>
+<title>Embodied AI Soft Robotics Dual-Language Dashboard</title>
 <style>
 *{ margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI","Microsoft YaHei",sans-serif; }
-body{ background:#0a0f1d; color:#e6edf3; min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x: hidden; }
-/* 📊 赛博朋克四象限网格布局 */
-.dashboard-grid { display: grid; grid-template-columns: 1fr 450px; width: 100%; max-width: 1400px; gap: 20px; padding: 20px; margin-top: 10px; flex: 1; }
-.left-column { display: flex; flex-direction: column; gap: 20px; }
-.right-column { background: #111827; border: 1px solid #1f2937; border-radius: 15px; display: flex; flex-direction: column; position: relative; box-shadow: 0 0 30px rgba(0,0,0,0.5); overflow: hidden; }
+body{ background:#0a0f1d; color:#e6edf3; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding-bottom: 40px; }
 
-.panel { background: #111827; border: 1px solid #1f2937; border-radius: 15px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
-.panel-title { font-size: 14px; color: #388bfd; margin-bottom: 15px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #1f2937; padding-bottom: 8px; }
-
-/* 📡 顶部配置栏 */
-.header{ width:100%; max-width:1400px; padding:15px 20px; display:flex; flex-wrap:wrap; gap:15px; align-items: center; justify-content: space-between; border-bottom: 1px solid #1f2937; }
-.input-group{ flex:1; max-width: 400px; }
-input{ width:100%; background:#0d1117; border:1px solid #30363d; color:white; padding:10px 15px; border-radius:8px; outline:none; font-size: 13px; }
+/* 📡 顶部配置导航栏 */
+.header{ width:100%; max-width:1000px; padding:20px; display:flex; gap:15px; align-items: center; justify-content: space-between; border-bottom: 1px solid #1f2937; margin-bottom: 20px; }
+.input-group{ flex:1; max-width: 450px; }
+input{ width:100%; background:#0d1117; border:1px solid #30363d; color:white; padding:12px 15px; border-radius:8px; outline:none; font-size: 13px; }
 input:focus{ border-color:#388bfd; box-shadow:0 0 10px rgba(56,139,253,0.3); }
-#connectPortBtn { background: linear-gradient(145deg,#1f6feb,#388bfd); color: white; padding: 10px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 13px; }
+#connectPortBtn { background: linear-gradient(145deg,#1f6feb,#388bfd); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 13px; }
 #connectPortBtn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(56,139,253,0.4); }
 
-/* 🎮 控制区核心按钮 */
-.control-zone { display: flex; gap: 20px; justify-content: center; margin-bottom: 10px; }
-.circle-btn { width:140px; height:140px; border-radius:50%; border:none; cursor:pointer; font-size:16px; font-weight:bold; color:white; transition:all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
-#recordBtn { background: linear-gradient(145deg,#238636,#2ea043); box-shadow:0 0 20px rgba(46,160,67,0.2); }
-#recordBtn:hover { transform: scale(1.05); box-shadow:0 0 30px rgba(46,160,67,0.4); }
-#stopBtn { background: linear-gradient(145deg,#b30000,#ff3b3b); box-shadow:0 0 20px rgba(255,59,59,0.2); }
-#stopBtn:hover { transform: scale(1.05); box-shadow:0 0 30px rgba(255,59,59,0.4); }
-.recording { animation: pulse 1.2s infinite; background: #ff3b3b !important; }
+/* 📊 赛博朋克科研主面板布局 */
+.main-container { width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: 20px; padding: 0 20px; }
+.panel { background: #111827; border: 1px solid #1f2937; border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+.panel-title { font-size: 14px; color: #388bfd; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #1f2937; padding-bottom: 8px; }
 
-/* ⏳ 自动化动作录制面板样式 */
-.rehab-bar { display: flex; gap: 15px; margin-bottom: 15px; background: #161b22; padding: 12px; border-radius: 10px; border: 1px dashed #30363d; align-items: center; }
-.rehab-btn { padding: 8px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 13px; }
+/* ⏳ 自动化动作录制面板 */
+.rehab-bar { display: flex; gap: 15px; background: #161b22; padding: 15px; border-radius: 10px; border: 1px dashed #30363d; align-items: center; }
+.rehab-btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 13px; }
 #macroRecordBtn { background: #f0883b; color: white; }
 #macroPlayBtn { background: #8a2be2; color: white; }
-.macro-indicator { font-size: 12px; color: #8b949e; flex: 1; text-align: right; }
+.macro-indicator { font-size: 13px; color: #8b949e; flex: 1; text-align: right; font-weight: 500; }
 
-.btn-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(115px, 1fr)); gap: 10px; }
-.action-btn { background: #161b22; border: 1px solid #30363d; color: #c9d1d9; padding: 12px 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: center; font-size: 13px; }
+/* 🌐 说话语言选择区域 */
+.lang-selector-box { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; background: #161b22; padding: 8px 15px; border-radius: 8px; width: fit-content; border: 1px solid #21262d; }
+.lang-radio { cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; color: #8b949e; }
+.lang-radio input { width: auto; cursor: pointer; accent-color: #388bfd; }
+.lang-radio.active-lang { color: #58a6ff; font-weight: bold; }
+
+/* 🎮 语音控制核心按钮 */
+.control-zone { display: flex; gap: 30px; justify-content: center; margin: 15px 0; }
+.circle-btn { width:150px; height:150px; border-radius:50%; border:none; cursor:pointer; font-size:15px; font-weight:bold; color:white; transition:all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+#recordBtn { background: linear-gradient(145deg,#238636,#2ea043); box-shadow:0 0 20px rgba(46,160,67,0.2); }
+#recordBtn:hover { transform: scale(1.03); box-shadow:0 0 30px rgba(46,160,67,0.4); }
+#stopBtn { background: linear-gradient(145deg,#b30000,#ff3b3b); box-shadow:0 0 20px rgba(255,59,59,0.2); }
+#stopBtn:hover { transform: scale(1.03); box-shadow:0 0 30px rgba(255,59,59,0.4); }
+.recording { animation: pulse 1.2s infinite; background: #ff3b3b !important; }
+
+#speechText { font-size:20px; color:#58a6ff; min-height:32px; text-align: center; font-style: italic; margin-bottom: 8px; font-weight: 500; }
+#status { font-size:14px; color:#f0b429; text-align: center; font-family: monospace; }
+
+/* 🎛️ 快捷键双语按键网格 */
+.btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+@media(min-width: 600px) { .btn-grid { grid-template-columns: repeat(5, 1fr); } }
+.action-btn { background: #161b22; border: 1px solid #30363d; color: #c9d1d9; padding: 14px 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: center; font-size: 13px; display: flex; flex-direction: column; gap: 4px; align-items: center; }
 .action-btn:hover { background: #21262d; border-color: #8b949e; color: white; }
+.action-btn span { font-size: 11px; opacity: 0.6; font-weight: normal; }
 
-#speechText { font-size:18px; color:#58a6ff; min-height:28px; text-align: center; font-style: italic; margin-bottom: 5px; }
-#status { font-size:14px; color:#f0b429; text-align: center; }
-.json-preview { background: #0d1117; color: #48bb78; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 12px; border: 1px solid #21262d; margin-top: 10px; }
-
-/* 🚨 核心回归：中英文双语高亮大屏数字区 ＋ 自动复位倒计时器 */
-.display-container { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0d1117; border-radius: 10px; border: 1px solid #21262d; padding: 15px; margin: 15px 0; min-height: 180px; }
-.huge-display { font-size: 100px; font-weight: 900; color: #39ff14; text-shadow: 0 0 20px rgba(57,255,20,0.4); font-family: Impact, sans-serif; line-height: 1; }
-.countdown-display { font-size: 14px; color: #ff3b3b; margin-top: 8px; font-family: monospace; font-weight: bold; letter-spacing: 0.5px; height: 18px; }
+/* 🚨 核心大屏幕显示区 */
+.display-container { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0d1117; border-radius: 12px; border: 1px solid #21262d; padding: 20px; margin: 20px 0; min-height: 200px; }
+.huge-display { font-size: 90px; font-weight: 900; color: #39ff14; text-shadow: 0 0 20px rgba(57,255,20,0.4); font-family: Impact, sans-serif; line-height: 1; }
+.pose-text-display { font-size: 18px; color: #58a6ff; margin-top: 10px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
+.countdown-display { font-size: 14px; color: #ff3b3b; margin-top: 12px; font-family: monospace; font-weight: bold; letter-spacing: 0.5px; height: 18px; }
 
 @keyframes pulse{ 0%{transform:scale(1);} 50%{transform:scale(1.03);} 100%{transform:scale(1);} }
 </style>
@@ -61,7 +67,7 @@ input:focus{ border-color:#388bfd; box-shadow:0 0 10px rgba(56,139,253,0.3); }
 <div class="header">
     <div style="display:flex; align-items:center; gap:12px;">
         <div style="width:12px; height:12px; background:#39ff14; border-radius:50%; box-shadow:0 0 10px #39ff14;"></div>
-        <h2 style="font-size:16px; letter-spacing:0.5px;">EMBODIED AI SOFT ROBOTICS CLIENT V3.1</h2>
+        <h2 style="font-size:16px; letter-spacing:0.5px;">EMBODIED AI SOFT ROBOTICS CLIENT V3.6</h2>
     </div>
     <div class="input-group">
         <input id="apiKey" type="password" value="sk-fc94ae6cb57f46238716b9b91dd268c7" placeholder="LLM API Key">
@@ -69,55 +75,59 @@ input:focus{ border-color:#388bfd; box-shadow:0 0 10px rgba(56,139,253,0.3); }
     <button id="connectPortBtn" onclick="initSerialPort()">🔌 Connect Type-C Wire</button>
 </div>
 
-<div class="dashboard-grid">
-    <div class="left-column">
-        <div class="panel">
-            <div class="panel-title">⏳ AUTOMATION SEQUENCE / 自动化动作控制</div>
-            <div class="rehab-bar">
-                <button id="macroRecordBtn" class="rehab-btn" onclick="toggleMacroRecording()">🔴 开始录制 / Start Recording</button>
-                <button id="macroPlayBtn" class="rehab-btn" onclick="playMacroSequence()">🔮 循环执行 / Loop Execute</button>
-                <div id="macroIndicator" class="macro-indicator">Empty / 队列内无动作</div>
-            </div>
-        </div>
-
-        <div class="panel">
-            <div class="panel-title">🎤 EMBODIED AGENT INTENT / 具身智能自然语言交互舱</div>
-            <div id="speechText">"Waiting for input... / 等待语音输入..."</div>
-            <div class="control-zone">
-                <button id="recordBtn" class="circle-btn"><div>🎙️ Speak</div><div style="font-size:11px; font-weight:normal; opacity:0.7;">点击开始说话</div></button>
-                <button id="stopBtn" class="circle-btn" onclick="emergencyStop()"><div>🛑 RESET</div><div style="font-size:11px; font-weight:normal; opacity:0.7;">紧急复位</div></button>
-            </div>
-            <div id="status">Please bind physical Type-C serial port / 请绑定数据线串口...</div>
-        </div>
-
-        <div class="panel">
-            <div class="panel-title">🎛️ SNAPSHOT COMPONENT / 快捷姿态快照</div>
-            <div class="btn-grid">
-                <button class="action-btn" onclick="triggerDirect('0', '✊')">✊ 握拳 (0)</button>
-                <button class="action-btn" onclick="triggerDirect('1', '1')">☝️ 数字 1</button>
-                <button class="action-btn" onclick="triggerDirect('2', '2')">✌️ 数字 2</button>
-                <button class="action-btn" onclick="triggerDirect('3', '3')">👌 数字 3</button>
-                <button class="action-btn" onclick="triggerDirect('4', '4')">🖐️ 数字 4</button>
-                <button class="action-btn" onclick="triggerDirect('5', '5')">✋ 数字 5</button>
-                <button class="action-btn" onclick="triggerDirect('6', '6')">🤙 数字 6</button>
-                <button class="action-btn" style="color:#58a6ff; border-color:#388bfd;" onclick="triggerDirect('7', '🤘')">🤘 摇滚大招</button>
-                <button class="action-btn" style="color:#58a6ff; border-color:#388bfd;" onclick="triggerDirect('8', '👌')">👌 OK大招</button>
-                <button class="action-btn" style="color:#58a6ff; border-color:#388bfd;" onclick="triggerDirect('9', '👍')">👍 点赞大招</button>
-            </div>
-            
-            <div class="display-container">
-                <div id="hugeDisplay" class="huge-display">?</div>
-                <div id="countdownDisplay" class="countdown-display"></div>
-            </div>
-            
-            <div id="jsonPreview" class="json-preview">📡 Type-C serial bus ready / 串口就绪。</div>
+<div class="main-container">
+    <div class="panel">
+        <div class="panel-title">⏳ AUTOMATION SEQUENCE / 自动化动作控制</div>
+        <div class="rehab-bar">
+            <button id="macroRecordBtn" class="rehab-btn" onclick="toggleMacroRecording()">🔴 开始录制 / Start Recording</button>
+            <button id="macroPlayBtn" class="rehab-btn" onclick="playMacroSequence()">🔮 循环执行 / Loop Execute</button>
+            <div id="macroIndicator" class="macro-indicator">Empty / 队列内无动作</div>
         </div>
     </div>
 
-    <div class="right-column">
-        <div id="threeCanvasContainer">
-            <div id="threeStatusTag">🤖 3D DIGITAL TWIN SYNCHRONIZER ACTIVE</div>
+    <div class="panel">
+        <div class="panel-title">🎤 EMBODIED AGENT INTENT / 具身智能自然语言交互舱</div>
+        
+        <div class="lang-selector-box">
+            <span style="font-size:12px; color:#8b949e; margin-right:5px;">🗣️ STT Language / 说话语言:</span>
+            <label class="lang-radio active-lang" id="lbl-zh">
+                <input type="radio" name="stt_lang" value="zh-CN" checked onchange="switchSTTLanguage('zh-CN')"> 中文 (Mandarin)
+            </label>
+            <label class="lang-radio" id="lbl-en" style="margin-left:10px;">
+                <input type="radio" name="stt_lang" value="en-US" onchange="switchSTTLanguage('en-US')"> English (Singlish)
+            </label>
         </div>
+
+        <div id="speechText">"Waiting for input... / 等待语音输入..."</div>
+        <div class="control-zone">
+            <button id="recordBtn" class="circle-btn"><div>🎙️ Speak</div><div style="font-size:11px; font-weight:normal; opacity:0.7;">点击开始说话</div></button>
+            <button id="stopBtn" class="circle-btn" onclick="emergencyStop()"><div>🛑 RESET</div><div style="font-size:11px; font-weight:normal; opacity:0.7;">紧急复位</div></button>
+        </div>
+        <div id="status">Please bind physical Type-C serial port / 请绑定数据线串口...</div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title">🎛️ SNAPSHOT COMPONENT / 快捷姿态快照</div>
+        <div class="btn-grid">
+            <button class="action-btn" onclick="triggerDirect('0')">✊ Fist <span>握拳 (0)</span></button>
+            <button class="action-btn" onclick="triggerDirect('1')">☝️ Index <span>数字 1</span></button>
+            <button class="action-btn" onclick="triggerDirect('2')">✌️ Victory <span>数字 2</span></button>
+            <button class="action-btn" onclick="triggerDirect('3')">👌 OK-3 <span>数字 3</span></button>
+            <button class="action-btn" onclick="triggerDirect('4')">🖐️ Four <span>数字 4</span></button>
+            <button class="action-btn" onclick="triggerDirect('5')">✋ Open <span>数字 5</span></button>
+            <button class="action-btn" onclick="triggerDirect('6')">🤙 Call-Me <span>数字 6</span></button>
+            <button class="action-btn" style="color:#58a6ff; border-color:#388bfd;" onclick="triggerDirect('7')">🤘 Rock <span>摇滚大招</span></button>
+            <button class="action-btn" style="color:#58a6ff; border-color:#388bfd;" onclick="triggerDirect('8')">👌 Precision <span>OK大招</span></button>
+            <button class="action-btn" style="color:#58a6ff; border-color:#388bfd;" onclick="triggerDirect('9')">👍 ThumbsUp <span>点赞大招</span></button>
+        </div>
+        
+        <div class="display-container">
+            <div id="hugeDisplay" class="huge-display">?</div>
+            <div id="poseTextDisplay" class="pose-text-display">System Ready / 系统就绪</div>
+            <div id="countdownDisplay" class="countdown-display"></div>
+        </div>
+        
+        <div id="jsonPreview" class="json-preview">📡 Type-C serial bus ready / 串口总线就绪。</div>
     </div>
 </div>
 
@@ -137,117 +147,53 @@ const POSES_DICTIONARY = {
 
 const EM_DISPLAY = {"0":"✊","1":"☝️","2":"✌️","3":"👌","4":"🖐️","5":"✋","6":"🤙","7":"🤘","8":"👌","9":"👍"};
 
+const EM_TEXT_DISPLAY = {
+    "0": "Fist / 握拳",
+    "1": "Number 1 / 数字 1",
+    "2": "Victory / 数字 2",
+    "3": "Number 3 / 数字 3",
+    "4": "Number 4 / 数字 4",
+    "5": "Open Palm / 放松张开",
+    "6": "Call Me / 数字 6",
+    "7": "Rock 'N' Roll / 摇滚大招",
+    "8": "Precision OK / OK大招",
+    "9": "Thumbs Up / 点赞大招"
+};
+
 let recognition;
 let isRecording = false;
 let finalTranscript = ""; 
 let serialWriter = null;
+let currentSTTLanguage = "zh-CN"; // 默认采集中文
 
-// ⏳ 倒计时与安全复位核心变量
+// ⏳ 倒计时安全复位变量
 let autoResetTimeout = null; 
 let countdownInterval = null;
 let secondsRemaining = 0;
 
-// ⚙️ 自动化宏控制变量
+// ⚙️ 自动化动作录制变量
 let isMacroRecording = false;
 let rehabMacroSequence = []; 
 let isMacroPlaying = false;
 let macroInterval = null;
 
-// ==========================================
-// 🪐 THREE.JS 3D 数字孪生引擎（带强力容错）
-// ==========================================
-let scene, camera, renderer;
-let fingers = []; 
-
-function init3DDigitalTwin() {
-    try {
-        if (typeof THREE === 'undefined') {
-            console.error("Three.js 未加载成功，跳过3D初始化，保证核心功能运行。");
-            document.getElementById("threeStatusTag").textContent = "⚠️ 3D ENGINE OFFLINE (NETWORK DELAY)";
-            return;
-        }
-        const container = document.getElementById('threeCanvasContainer');
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x0f172a);
-        
-        camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-        camera.position.set(0, 5, 18);
-        camera.lookAt(0, 2, 0);
-
-        renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(container.clientWidth, container.clientHeight);
-        container.appendChild(renderer.domElement);
-
-        const ambientLight = new THREE.AmbientLight(0x334155, 1.5); scene.add(ambientLight);
-        const directionalLight = new THREE.DirectionalLight(0x388bfd, 2); directionalLight.position.set(5, 10, 7); scene.add(directionalLight);
-        const pointLight = new THREE.PointLight(0x39ff14, 1, 10); pointLight.position.set(-3, 2, 2); scene.add(pointLight);
-
-        const palmGeo = new THREE.BoxGeometry(4.5, 4, 0.6);
-        const palmMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.4, metalness: 0.2 });
-        const palm = new THREE.Mesh(palmGeo, palmMat);
-        palm.position.y = 0;
-        scene.add(palm);
-
-        const fingerPositions = [-1.8, -0.9, 0, 0.9, 1.8]; 
-        const fingerColors = [0x388bfd, 0x58a6ff, 0x58a6ff, 0x58a6ff, 0x388bfd];
-
-        for(let i=0; i<5; i++) {
-            const jointPivot = new THREE.Group();
-            jointPivot.position.set(fingerPositions[i], 2, 0);
-            
-            let fLength = i === 0 ? 1.8 : 2.5; 
-            const fingerGeo = new THREE.CylinderGeometry(0.2, 0.25, fLength, 16);
-            const fingerMat = new THREE.MeshStandardMaterial({ color: fingerColors[i], roughness: 0.3 });
-            const fingerMesh = new THREE.Mesh(fingerGeo, fingerMat);
-            
-            fingerMesh.position.y = fLength / 2;
-            jointPivot.add(fingerMesh);
-            
-            scene.add(jointPivot);
-            fingers.push(jointPivot); 
-        }
-
-        fingers[0].position.x = -2.2;
-        fingers[0].position.y = 0.5;
-        fingers[0].rotation.z = 0.4; 
-
-        animate3D();
-    } catch (e) {
-        console.error("3D 渲染出错: ", e);
+// 🌐 说话语种秒切逻辑
+function switchSTTLanguage(lang) {
+    currentSTTLanguage = lang;
+    document.getElementById("lbl-zh").classList.toggle("active-lang", lang === "zh-CN");
+    document.getElementById("lbl-en").classList.toggle("active-lang", lang === "en-US");
+    
+    if(lang === "zh-CN") {
+        document.getElementById("speechText").textContent = "Waiting for input... / 等待语音输入...";
+        setStatus("Switched to Mandarin / 语音识别已切换为中文。");
+    } else {
+        document.getElementById("speechText").textContent = "Waiting for English (Singlish) input...";
+        setStatus("Switched to Singlish / 语音识别已切换为新加坡英语。");
     }
 }
 
-function animate3D() {
-    if (typeof THREE !== 'undefined' && renderer && scene && camera) {
-        requestAnimationFrame(animate3D);
-        renderer.render(scene, camera);
-    }
-}
-
-function update3DHandPose(p0, p1, p2, p3, p4) {
-    if (fingers.length === 5) {
-        fingers[0].rotation.x = (p0 / 180) * (Math.PI / 2.1);
-        fingers[1].rotation.x = (p1 / 180) * (Math.PI / 2.1);
-        fingers[2].rotation.x = (p2 / 180) * (Math.PI / 2.1);
-        fingers[3].rotation.x = (p3 / 180) * (Math.PI / 2.1);
-        fingers[4].rotation.x = (p4 / 180) * (Math.PI / 2.1);
-    }
-}
-
-window.addEventListener('resize', () => {
-    const container = document.getElementById('threeCanvasContainer');
-    if(camera && renderer) {
-        camera.aspect = container.clientWidth / container.clientHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(container.clientWidth, container.clientHeight);
-    }
-});
-
-// ==========================================
-// ⏱️ 倒计时安全复位逻辑控制
-// ==========================================
+// ⏱️ 自动复位倒计时器
 function startAutoResetCountdown() {
-    // 每次动作突变，无条件清空上一次的定时器
     if(autoResetTimeout) clearTimeout(autoResetTimeout);
     if(countdownInterval) clearInterval(countdownInterval);
     
@@ -266,7 +212,7 @@ function startAutoResetCountdown() {
     }, 1000);
 
     autoResetTimeout = setTimeout(() => { 
-        executePoseHardwareAndTwin("5"); // 10秒到期强制伸掌(5)复位
+        executeHardwarePipeline("5"); // 10秒到期强制伸掌(5)安全复位
     }, 10400); 
 }
 
@@ -276,9 +222,7 @@ function clearAllTimers() {
     document.getElementById("countdownDisplay").textContent = "";
 }
 
-// ==========================================
-// ⏳ 自动化动作录制流函数
-// ==========================================
+// ⏳ 自动化动作录制
 function toggleMacroRecording() {
     const btn = document.getElementById("macroRecordBtn");
     const indicator = document.getElementById("macroIndicator");
@@ -288,7 +232,7 @@ function toggleMacroRecording() {
         rehabMacroSequence = []; 
         btn.textContent = "🛑 停止并保存 / Stop & Save";
         btn.style.background = "#ff3b3b";
-        indicator.textContent = "Listening... / 正在录制动作序列...";
+        indicator.textContent = "Recording Sequence... / 正在录制动作序列...";
     } else {
         isMacroRecording = false;
         btn.textContent = "🔴 开始录制 / Start Recording";
@@ -303,19 +247,19 @@ function toggleMacroRecording() {
 
 function playMacroSequence() {
     const btn = document.getElementById("macroPlayBtn");
-    if(rehabMacroSequence.length === 0) { alert("Warning: No poses recorded in the sequence! / 提示：动作队列为空，请先录制！"); return; }
+    if(rehabMacroSequence.length === 0) { alert("Warning: No poses recorded! / 提示：动作队列为空，请先录制！"); return; }
 
     if(!isMacroPlaying) {
         isMacroPlaying = true;
         btn.textContent = "🛑 停止循环 / Stop Loop";
         btn.style.background = "#b30000";
-        clearAllTimers(); // 循环执行期间不需要倒计时打扰
+        clearAllTimers(); 
         
         let stepIndex = 0;
         macroInterval = setInterval(() => {
             let currentPoseKey = rehabMacroSequence[stepIndex];
             setStatus(`Loop executing / 正在循环动作: [${stepIndex + 1}/${rehabMacroSequence.length}]`);
-            executePoseHardwareAndTwin(currentPoseKey);
+            executeHardwarePipeline(currentPoseKey);
             stepIndex = (stepIndex + 1) % rehabMacroSequence.length; 
         }, 2000); 
     } else {
@@ -332,9 +276,7 @@ function stopMacroPlayback() {
     setStatus("Paused / 循环已停止。");
 }
 
-// ==========================================
-// 🔌 硬件串口总线交互与大脑执行
-// ==========================================
+// 🔌 串行硬件交互
 async function initSerialPort() {
     try {
         if (!("serial" in navigator)) { alert("Your browser does not support Web Serial API."); return; }
@@ -352,34 +294,38 @@ async function initSerialPort() {
 
 function setStatus(msg){ document.getElementById("status").textContent = msg; }
 
-function executePoseHardwareAndTwin(actionKey) {
+// 【大屏幕刷新与硬件脉冲发送总线】
+function executeHardwarePipeline(actionKey) {
     if (POSES_DICTIONARY[actionKey]) {
         document.getElementById("hugeDisplay").textContent = EM_DISPLAY[actionKey] || actionKey;
+        document.getElementById("poseTextDisplay").textContent = EM_TEXT_DISPLAY[actionKey] || "";
         const angles = POSES_DICTIONARY[actionKey];
-        update3DHandPose(angles[0], angles[1], angles[2], angles[3], angles[4]);
         sendAnglesToESP32(angles[0], angles[1], angles[2], angles[3], angles[4]);
     }
 }
 
-function triggerDirect(action, label) {
+function triggerDirect(action) {
     if(isMacroPlaying) stopMacroPlayback();
-    
     if(isMacroRecording) { 
         rehabMacroSequence.push(action); 
-        document.getElementById("macroIndicator").textContent = `Recorded / 已录入: ${label} (${rehabMacroSequence.length} total)`; 
+        document.getElementById("macroIndicator").textContent = `Recorded / 已录入: ${EM_DISPLAY[action]} (${rehabMacroSequence.length} total)`; 
     }
-
-    executePoseHardwareAndTwin(action);
-    startAutoResetCountdown(); // 🪐 激活10秒倒计时安全复位
+    executeHardwarePipeline(action);
+    startAutoResetCountdown(); 
 }
 
+// 🎙️ 语音听写引擎（动态绑定所选语种）
 function initRecognition(){
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SpeechRecognition) { alert("Browser error: Please use Google Chrome for Speech Recognition."); return; }
+    
     recognition = new SpeechRecognition();
-    recognition.lang = "zh-CN"; recognition.interimResults = true; recognition.continuous = true;
+    recognition.lang = currentSTTLanguage; // 🚀 绑定 zh-CN 或 en-US
+    recognition.interimResults = true; 
+    recognition.continuous = true;
     finalTranscript = "";
 
-    recognition.onstart = () => { isRecording = true; document.getElementById("recordBtn").classList.add("recording"); setStatus(`Listening... / 正在采集语音信号...`); };
+    recognition.onstart = () => { isRecording = true; document.getElementById("recordBtn").classList.add("recording"); setStatus(`Listening [${currentSTTLanguage}]... / 正在采集语音...`); };
     recognition.onresult = (event) => {
         let interimTranscript = "";
         for (let i = event.resultIndex; i < event.results.length; ++i) {
@@ -390,7 +336,7 @@ function initRecognition(){
     };
     recognition.onend = () => { 
         document.getElementById("recordBtn").classList.remove("recording"); 
-        if(!isRecording && finalTranscript.trim() !== "") { setStatus("Processing... / 大模型语义对齐中..."); askLLM(finalTranscript.trim()); } 
+        if(!isRecording && finalTranscript.trim() !== "") { setStatus("Aligning intent... / 大模型语义对齐中..."); askLLM(finalTranscript.trim()); } 
     };
 }
 
@@ -405,21 +351,34 @@ function emergencyStop() {
     if(isMacroPlaying) stopMacroPlayback();
     clearAllTimers();
     document.getElementById("hugeDisplay").textContent = "🛑";
-    document.getElementById("speechText").textContent = "[EMERGENCY RESET]";
-    setStatus("Emergency Reset / 紧急安全复位下发。");
-    update3DHandPose(0, 0, 0, 0, 0);
+    document.getElementById("poseTextDisplay").textContent = "EMERGENCY RESET / 紧急安全复位";
+    setStatus("Emergency Reset / 紧急复位信号已下发。");
     sendAnglesToESP32(0, 0, 0, 0, 0); 
 }
 
 async function askLLM(userText){
     const apiKey = document.getElementById("apiKey").value.trim();
-    if(!apiKey){ setStatus("❌ Missing API Key"); return; }
+    if(!apiKey){ setStatus("❌ Missing API Key / 缺少密钥"); return; }
     
-    const systemPrompt = `You are a strict math solver and social intent translator for a 5-DOF robotic hand.
+    // 🧠 终极注入 Singlish 语料库的具身大模型提示词系统
+    const systemPrompt = `You are an expert dual-language intent translator for a 5-DOF robotic hand, specially optimized for Singapore English (Singlish) and Mandarin used in clinical environments like NHCS.
 Your output choice is STRICTLY RESTRICTED to numbers between "0" and "6", or specific intent codes: "7" (Rock), "8" (OK), "9" (Thumbs Up).
-RULES:
-1. SOCIAL INTENT (Priority): "点赞/优秀" -> "9", "没问题/收到/OK" -> "8", "摇滚/嗨起来" -> "7", "拍照/耶" -> "2".
-2. MATH LIMIT: Calculate the math first. If answer is 0-6, output it. If answer is GREATER THAN 6, FORCE CLAMP IT TO "6". If negative -> "0".
+
+RULES FOR SINGLISH & CHINESE INTENT (Highest Priority):
+1. THUMBS UP / EXCELLENT (Output "9"):
+   - Singlish: "Steady lah!", "Gao dim already", "So power", "Swee lah!", "Lao jiao", "Choi/Chio"
+   - Chinese: "点赞", "优秀", "太棒了", "厉害"
+2. OK / RECEIVED / CONFIRMED (Output "8"):
+   - Singlish: "Can lah!", "Can or not? Can!", "Ok lor", "No problem", "Don't chiisin", "Settle already"
+   - Chinese: "没问题", "收到", "可以", "好的"
+3. ROCK / EXCITED (Output "7"):
+   - Singlish: "Chiong ah!", "Hao lian", "Damn shok", "Huat ah!"
+   - Chinese: "嗨起来", "摇滚", "冲啊"
+4. VICTORY / TAKE PHOTO (Output "2"):
+   - Singlish: "Say cheese", "Take picture", "Say carrot"
+   - Chinese: "拍照", "比心", "耶", "茄子"
+
+MATH LIMIT: Calculate the math formula mentioned in any language first. If answer is 0-6, output it. If answer is GREATER THAN 6, FORCE CLAMP IT TO "6". If negative -> "0".
 OUTPUT ONLY RAW JSON like {"ans":"3"}. NO MARKDOWN CODES.`;
 
     try{
@@ -434,16 +393,14 @@ OUTPUT ONLY RAW JSON like {"ans":"3"}. NO MARKDOWN CODES.`;
         const parsed = JSON.parse(aiResponse);
         if(parsed.hasOwnProperty('ans')) {
             let finalAns = parsed.ans;
-            
             if(isMacroRecording) { 
                 rehabMacroSequence.push(finalAns); 
                 document.getElementById("macroIndicator").textContent = `Recorded AI Pose / 已录入AI动作: ${EM_DISPLAY[finalAns]} (${rehabMacroSequence.length} total)`; 
             }
-
-            executePoseHardwareAndTwin(finalAns);
-            startAutoResetCountdown(); // 🪐 大模型控制同样完美激活倒计时安全复位
+            executeHardwarePipeline(finalAns);
+            startAutoResetCountdown(); 
         }
-    }catch(err){ setStatus("Request failed / 通信中断: " + err.message); }
+    }catch(err){ setStatus("Request failed / 语义解算失败: " + err.message); }
 }
 
 async function sendAnglesToESP32(p0, p1, p2, p3, p4){
@@ -454,8 +411,6 @@ async function sendAnglesToESP32(p0, p1, p2, p3, p4){
         document.getElementById("jsonPreview").textContent = `🚀 [Type-C Sent] -> ${payload.trim()}`;
     } catch (err) { }
 }
-
-window.onload = () => { init3DDigitalTwin(); };
 </script>
 </body>
 </html>
