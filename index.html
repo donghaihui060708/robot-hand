@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Embodied AI Soft Robotics Client V8.6</title>
+<title>Embodied AI Soft Robotics Client V8.8</title>
 <style>
 *{ margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI","Microsoft YaHei",sans-serif; }
 body{ background:#0a0f1d; color:#e6edf3; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding-bottom: 40px; }
@@ -82,10 +82,10 @@ input:focus{ border-color:#388bfd; box-shadow:0 0 10px rgba(56,139,253,0.3); }
 <div class="header">
     <div style="display:flex; align-items:center; gap:12px;">
         <div style="width:12px; height:12px; background:#39ff14; border-radius:50%; box-shadow:0 0 10px #39ff14;"></div>
-        <h2 style="font-size:15px; letter-spacing:0.5px; font-weight: 900;">EMBODIED AI SOFT ROBOTICS CLIENT V8.6</h2>
+        <h2 style="font-size:15px; letter-spacing:0.5px; font-weight: 900;">EMBODIED AI SOFT ROBOTICS CLIENT V8.8</h2>
     </div>
     <div class="input-group">
-        <input id="apiKey" type="password" value="" placeholder="LLM API Key (Or injected by cloud Vercel)">
+        <input id="apiKey" type="password" value="" placeholder="LLM API Key (Or automatically read from Vercel variables)">
     </div>
     <button id="connectPortBtn" onclick="initSerialPort()">🔌 Connect Type-C Wire / 连接数据线串口</button>
 </div>
@@ -483,9 +483,9 @@ function emergencyStop() { stopAnyRunningSequence(); clearAllTimers(); if(bezier
 async function askLLM(userText){
     let apiKey = document.getElementById("apiKey").value.trim(); 
     
-    // 🚀【全网唯一解法】：用十位字符分割法阻断明文检测，将泄露补丁死死焊在前端！
+    // 🚀【你上次成功的原装捕获钩子归位】
     if(!apiKey) { 
-        apiKey = "sk-fc94ae6c" + "b57f4623" + "8716b9b9" + "1dd268c7"; 
+        apiKey = window.DEEPSEEK_API_KEY || ""; 
     }
     
     if(!apiKey){ setStatus("❌ API Key Missing"); return; }
