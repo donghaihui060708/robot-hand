@@ -1,21 +1,27 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Embodied AI Soft Robotics Client V3.6</title>
+<title>Embodied AI Soft Robotics Client V6.6</title>
 <style>
 *{ margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI","Microsoft YaHei",sans-serif; }
 body{ background:#0a0f1d; color:#e6edf3; min-height:100vh; display:flex; flex-direction:column; align-items:center; padding-bottom: 40px; }
 .header{ width:100%; max-width:1000px; padding:20px; display:flex; gap:15px; align-items: center; justify-content: space-between; border-bottom: 1px solid #1f2937; margin-bottom: 20px; }
-.input-group{ flex:1; max-width: 450px; }
+.input-group{ flex:1; max-width: 400px; }
 input{ width:100%; background:#0d1117; border:1px solid #30363d; color:white; padding:12px 15px; border-radius:8px; outline:none; font-size: 13px; }
 input:focus{ border-color:#388bfd; box-shadow:0 0 10px rgba(56,139,253,0.3); }
 #connectPortBtn { background: linear-gradient(145deg,#1f6feb,#388bfd); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 13px; }
 #connectPortBtn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(56,139,253,0.4); }
 .main-container { width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: 20px; padding: 0 20px; }
 .panel { background: #111827; border: 1px solid #1f2937; border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
-.panel-title { font-size: 14px; color: #388bfd; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #1f2937; padding-bottom: 8px; }
+.panel-title { font-size: 13px; color: #388bfd; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #1f2937; padding-bottom: 8px; }
+.panel-title span { font-size: 11px; color: #8b949e; text-transform: none; font-weight: normal; margin-left: 5px; }
+.control-sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: #161b22; padding: 15px; border-radius: 10px; border: 1px solid #21262d; margin-bottom: 20px; }
+.slider-group { display: flex; flex-direction: column; gap: 8px; }
+.slider-group label { font-size: 12px; font-weight: bold; color: #8b949e; display: flex; justify-content: space-between; }
+.slider-group label span { color: #39ff14; font-family: monospace; }
+.slider-group input[type="range"] { width: 100%; accent-color: #388bfd; background: #0d1117; height: 6px; border-radius: 3px; outline: none; cursor: pointer; }
 .rehab-bar { display: flex; gap: 15px; background: #161b22; padding: 15px; border-radius: 10px; border: 1px dashed #30363d; align-items: center; }
 .rehab-btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 13px; }
 #macroRecordBtn { background: #f0883b; color: white; }
@@ -36,6 +42,10 @@ input:focus{ border-color:#388bfd; box-shadow:0 0 10px rgba(56,139,253,0.3); }
 .pause-seq-btn.btn-is-paused { background: #238636 !important; color: white; } 
 .del-seq-btn { background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 8px 14px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 12px; transition: all 0.2s; }
 .del-seq-btn:hover { background: #b30000; color: white; border-color: #b30000; }
+.text-chat-box { display: flex; gap: 10px; margin-bottom: 20px; background: #161b22; padding: 15px; border-radius: 10px; border: 1px solid #21262d; }
+.text-chat-box input { flex: 1; background: #0d1117; border: 1px solid #30363d; color: white; padding: 12px; border-radius: 6px; }
+.text-chat-box button { background: #238636; color: white; border: none; padding: 0 22px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 13px; }
+.text-chat-box button:hover { background: #2ea043; }
 .lang-selector-box { display: flex; gap: 10px; align-items: center; margin-bottom: 15px; background: #161b22; padding: 8px 15px; border-radius: 8px; width: fit-content; border: 1px solid #21262d; }
 .lang-radio { cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; color: #8b949e; }
 .lang-radio input { width: auto; cursor: pointer; accent-color: #388bfd; }
@@ -51,9 +61,9 @@ input:focus{ border-color:#388bfd; box-shadow:0 0 10px rgba(56,139,253,0.3); }
 #status { font-size:14px; color:#f0b429; text-align: center; font-family: monospace; }
 .btn-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 @media(min-width: 600px) { .btn-grid { grid-template-columns: repeat(5, 1fr); } }
-.action-btn { background: #161b22; border: 1px solid #30363d; color: #c9d1d9; padding: 14px 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: center; font-size: 13px; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+.action-btn { background: #161b22; border: 1px solid #30363d; color: #c9d1d9; padding: 14px 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: center; font-size: 13px; display: flex; flex-direction: column; gap: 4px; align-items: center; font-weight: bold; }
 .action-btn:hover { background: #21262d; border-color: #8b949e; color: white; }
-.action-btn span { font-size: 11px; opacity: 0.6; font-weight: normal; }
+.action-btn span { font-size: 11px; opacity: 0.6; font-weight: normal; block-size: auto; }
 .display-container { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #0d1117; border-radius: 12px; border: 1px solid #21262d; padding: 20px; margin: 20px 0; min-height: 200px; }
 .huge-display { font-size: 90px; font-weight: 900; color: #39ff14; text-shadow: 0 0 20px rgba(57,255,20,0.4); font-family: Impact, sans-serif; line-height: 1; }
 .pose-text-display { font-size: 18px; color: #58a6ff; margin-top: 10px; font-weight: bold; letter-spacing: 0.5px; text-transform: uppercase; }
@@ -66,56 +76,76 @@ input:focus{ border-color:#388bfd; box-shadow:0 0 10px rgba(56,139,253,0.3); }
 <div class="header">
     <div style="display:flex; align-items:center; gap:12px;">
         <div style="width:12px; height:12px; background:#39ff14; border-radius:50%; box-shadow:0 0 10px #39ff14;"></div>
-        <h2 style="font-size:16px; letter-spacing:0.5px;">EMBODIED AI SOFT ROBOTICS CLIENT V3.6</h2>
+        <h2 style="font-size:15px; letter-spacing:0.5px; font-weight: 900;">EMBODIED AI SOFT ROBOTICS CLIENT V6.6</h2>
     </div>
     <div class="input-group">
         <input id="apiKey" type="password" value="" placeholder="LLM API Key (Or injected by cloud Vercel)">
     </div>
-    <button id="connectPortBtn" onclick="initSerialPort()">🔌 Connect Type-C Wire</button>
+    <button id="connectPortBtn" onclick="initSerialPort()">🔌 Connect Type-C Wire / 连接数据线串口</button>
 </div>
 
 <div class="main-container">
     <div class="panel">
-        <div class="panel-title">⏳ AUTOMATION SEQUENCE / 自动化动作控制</div>
+        <div class="panel-title">🎚️ Real-time Bézier Trajectory Tuning <span>/ 贝塞尔曲线运动控制动态调节</span></div>
+        <div class="control-sliders">
+            <div class="slider-group">
+                <label>Motion Duration (ms) <span><span id="valDuration">800</span> ms</span></label>
+                <input id="slideDuration" type="range" min="200" max="3000" step="50" value="800" oninput="updateSliderLabels()">
+            </div>
+            <div class="slider-group">
+                <label>Frame Step Delay (ms) <span><span id="valStepDelay">16</span> ms</span></label>
+                <input id="slideStepDelay" type="range" min="5" max="50" step="1" value="16" oninput="updateSliderLabels()">
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title">⏳ Automation Sequence Control <span>/ 自动化动作序列控制</span></div>
         <div class="rehab-bar">
-            <button id="macroRecordBtn" class="rehab-btn" onclick="toggleMacroRecording()">🔴 开始录制 / Start Recording</button>
+            <button id="macroRecordBtn" class="rehab-btn" onclick="toggleMacroRecording()">🔴 Start Recording / 开始录制</button>
             <div id="macroIndicator" class="macro-indicator">Ready / 等待拉开录制网...</div>
         </div>
         <div id="sequenceLibraryContainer" class="library-grid"></div>
     </div>
 
     <div class="panel">
-        <div class="panel-title">🎤 EMBODIED AGENT INTENT / 具身智能自然语言交互舱</div>
+        <div class="panel-title">🎤 Embodied Agent Intelligence Cabin <span>/ 具身智能自然语言交互舱</span></div>
+        
+        <div class="text-chat-box">
+            <input id="textInput" type="text" placeholder="Type command here and press Enter... / 在这里输入文字指令并回车..." onkeydown="if(event.key==='Enter') sendTextMessage()">
+            <button onclick="sendTextMessage()">Send / 发送</button>
+        </div>
+
         <div class="lang-selector-box">
-            <span style="font-size:12px; color:#8b949e; margin-right:5px;">🗣️ STT Language:</span>
+            <span style="font-size:12px; color:#8b949e; margin-right:5px;">🗣️ STT Language / 说话语言:</span>
             <label class="lang-radio active-lang" id="lbl-zh">
-                <input type="radio" name="stt_lang" value="zh-CN" checked onchange="switchSTTLanguage('zh-CN')"> 中文 (Mandarin)
+                <input type="radio" name="stt_lang" value="zh-CN" checked onchange="switchSTTLanguage('zh-CN')"> English / 英文辅助
             </label>
             <label class="lang-radio" id="lbl-en" style="margin-left:10px;">
-                <input type="radio" name="stt_lang" value="en-US" onchange="switchSTTLanguage('en-US')"> English (Singlish)
+                <input type="radio" name="stt_lang" value="en-US" onchange="switchSTTLanguage('en-US')"> Mandarin / 中文辅助
             </label>
         </div>
-        <div id="speechText">"Waiting for input... / 等待语音输入..."</div>
+        <div id="speechText">"Waiting for user input... / 等待语音或文字输入..."</div>
         <div class="control-zone">
-            <button id="recordBtn" class="circle-btn"><div>🎙️ Speak</div></button>
-            <button id="stopBtn" class="circle-btn" onclick="emergencyStop()"><div>🛑 RESET</div></button>
+            <button id="recordBtn" class="circle-btn"><div>🎙️ Speak</div><div style="font-size:11px; font-weight:normal; opacity:0.7;">Click to talk</div></button>
+            <button id="stopBtn" class="circle-btn" onclick="emergencyStop()"><div>🛑 RESET</div><div style="font-size:11px; font-weight:normal; opacity:0.7;">Emergency stop</div></button>
         </div>
-        <div id="status">Please bind physical Type-C serial port / 请绑定数据线串口...</div>
+        <div id="status">Please bind physical Type-C serial port / 请绑定物理数据线串口...</div>
     </div>
 
     <div class="panel">
-        <div class="panel-title">🎛️ SNAPSHOT COMPONENT / 快捷姿态快照</div>
+        <div class="panel-title">🎛️ Snapshot Gesture Components <span>/ 快捷手势姿态快照</span></div>
         <div class="btn-grid">
-            <button class="action-btn" onclick="triggerDirect('0', '✊')">✊ Fist <span>握拳 (0)</span></button>
-            <button class="action-btn" onclick="triggerDirect('1', '1')">☝️ Index <span>数字 1</span></button>
-            <button class="action-btn" onclick="triggerDirect('2', '2')">✌️ Victory <span>数字 2</span></button>
-            <button class="action-btn" onclick="triggerDirect('3', '3')">👌 OK-3 <span>数字 3</span></button>
-            <button class="action-btn" onclick="triggerDirect('4', '4')">🖐️ Four <span>数字 4</span></button>
-            <button class="action-btn" onclick="triggerDirect('5', '5')">✋ Open <span>数字 5</span></button>
-            <button class="action-btn" onclick="triggerDirect('6', '6')">🤙 Call-Me <span>数字 6</span></button>
-            <button class="action-btn" style="color:#58a6ff; border-color:#388bfd;" onclick="triggerDirect('7', '🤘')">🤘 Rock <span>摇滚大招</span></button>
-            <button class="action-btn" style="color:#58a6ff; border-color:#388bfd;" onclick="triggerDirect('8', '👌')">👌 Precision <span>OK大招</span></button>
-            <button class="action-btn" style="color:#58a6ff; border-color:#388bfd;" onclick="triggerDirect('9', '👍')">👍 ThumbsUp <span>点赞大招</span></button>
+            <button class="action-btn" onclick="triggerDirect('0')">✊ Fist <span>握拳 (0)</span></button>
+            <button class="action-btn" onclick="triggerDirect('1')">☝️ Index <span>数字 1</span></button>
+            <button class="action-btn" onclick="triggerDirect('2')">✌️ Victory <span>数字 2</span></button>
+            <button class="action-btn" onclick="triggerDirect('3')">👌 OK-3 <span>数字 3</span></button>
+            <button class="action-btn" onclick="triggerDirect('4')">🖐️ Four <span>数字 4</span></button>
+            <button class="action-btn" onclick="triggerDirect('5')">✋ Open <span>数字 5</span></button>
+            <button class="action-btn" onclick="triggerDirect('6')">🤙 Call-Me <span>数字 6</span></button>
+            <button class="action-btn" style="color:#58a6ff; border-color:#388bfd;" onclick="triggerDirect('7')">🤘 Rock <span>摇滚手势</span></button>
+            <button class="action-btn" style="color:#58a6ff; border-color:#388bfd;" onclick="triggerDirect('8')">👌 Precision OK <span>OK手势</span></button>
+            <button class="action-btn" style="color:#58a6ff; border-color:#388bfd;" onclick="triggerDirect('9')">👍 Thumbs Up <span>点赞手势</span></button>
         </div>
         <div class="display-container">
             <div id="hugeDisplay" class="huge-display">?</div>
@@ -136,12 +166,25 @@ const EM_DISPLAY = {"0":"✊","1":"☝️","2":"✌️","3":"👌","4":"🖐️"
 const EM_TEXT_DISPLAY = {
     "0": "Fist / 握拳", "1": "Number 1 / 数字 1", "2": "Victory / 数字 2", "3": "Number 3 / 数字 3",
     "4": "Number 4 / 数字 4", "5": "Open Palm / 放松张开", "6": "Call Me / 数字 6",
-    "7": "Rock 'N' Roll / 摇滚大招", "8": "Precision OK / OK大招", "9": "Thumbs Up / 点赞大招"
+    "7": "Rock / 摇滚", "8": "Precision OK / OK", "9": "Thumbs Up / 点赞"
 };
 
 let recognition, isRecording = false, finalTranscript = "", serialWriter = null, currentSTTLanguage = "zh-CN";
 let autoResetTimeout = null, countdownInterval = null, secondsRemaining = 0;
-let isMacroRecording = false, rehabMacroSequence = [], globalSequenceLibrary = {}, activeRunningId = null, isLibraryPaused = false, currentStepIndexMap = {}, macroInterval = null;
+
+let isMacroRecording = false, rehabMacroSequence = [], globalSequenceLibrary = {}, activeRunningId = null, isLibraryPaused = false, currentStepIndexMap = {}, macroTimeoutId = null;
+let lastActionTime = 0;
+
+let currentAngles = [0, 0, 0, 0, 0];
+let targetAngles = [0, 0, 0, 0, 0];
+let startAngles = [0, 0, 0, 0, 0];
+let bezierStartTime = 0;
+let bezierTimeoutId = null;
+
+function updateSliderLabels() {
+    document.getElementById("valDuration").textContent = document.getElementById("slideDuration").value;
+    document.getElementById("valStepDelay").textContent = document.getElementById("slideStepDelay").value;
+}
 
 function switchSTTLanguage(lang) {
     currentSTTLanguage = lang;
@@ -172,20 +215,20 @@ function toggleMacroRecording() {
     const btn = document.getElementById("macroRecordBtn");
     const indicator = document.getElementById("macroIndicator");
     if(!isMacroRecording) {
-        stopAnyRunningSequence(); isMacroRecording = true; rehabMacroSequence = []; 
-        btn.textContent = "🛑 停止并命名保存 / Stop & Save"; btn.style.background = "#ff3b3b";
-        indicator.textContent = "Recording Sequence...";
+        stopAnyRunningSequence(); isMacroRecording = true; rehabMacroSequence = []; lastActionTime = Date.now();
+        btn.textContent = "🛑 Stop & Save / 停止并保存"; btn.style.background = "#ff3b3b";
+        indicator.textContent = "Recording Sequence... Click buttons below";
     } else {
-        isMacroRecording = false; btn.textContent = "🔴 开始录制 / Start Recording"; btn.style.background = "#f0883b";
+        isMacroRecording = false; btn.textContent = "🔴 Start Recording / 开始录制"; btn.style.background = "#f0883b";
         if(rehabMacroSequence.length > 0) {
             let customName = prompt("Name this sequence:", `Sequence-${Object.keys(globalSequenceLibrary).length + 1}`);
             if (customName && customName.trim() !== "") {
                 let uniqueId = "seq_" + Math.random().toString(36).substr(2, 9);
                 globalSequenceLibrary[uniqueId] = { name: customName.trim(), actions: [...rehabMacroSequence] };
-                currentStepIndexMap[uniqueId] = 0; 
                 renderSequenceLibraryUI();
+                indicator.textContent = "Sequence Saved successfully!";
             }
-        }
+        } else { indicator.textContent = "Recording cancelled or empty."; }
     }
 }
 
@@ -193,12 +236,12 @@ function renderSequenceLibraryUI() {
     const container = document.getElementById("sequenceLibraryContainer");
     let htmlPool = "";
     if(Object.keys(globalSequenceLibrary).length === 0) {
-        container.innerHTML = `<div style="font-size:13px; color:#8b949e; text-align:center; padding:10px;">No saved sequences</div>`;
+        container.innerHTML = `<div style="font-size:13px; color:#8b949e; text-align:center; padding:10px;">No saved sequences / 暂无保存动作序列</div>`;
         return;
     }
     Object.keys(globalSequenceLibrary).forEach(id => {
         let seqData = globalSequenceLibrary[id];
-        let emojiChain = seqData.actions.map(act => EM_DISPLAY[act] || act).join(" ➔ ");
+        let emojiChain = seqData.actions.map(item => EM_DISPLAY[item.key] || item.key).join(" ➔ ");
         let isRunning = (activeRunningId === id);
         let buttonsHtml = isRunning ? `
             <button class="pause-seq-btn ${isLibraryPaused ? 'btn-is-paused' : ''}" onclick="handleControlClick('${id}', 'pause')">${isLibraryPaused ? '▶️ Resume' : '⏸️ Pause'}</button>
@@ -215,34 +258,50 @@ function renderSequenceLibraryUI() {
 
 function handleControlClick(id, actionType) {
     if (actionType === 'stop') {
-        if(macroInterval) { clearInterval(macroInterval); macroInterval = null; }
-        activeRunningId = null; isLibraryPaused = false; currentStepIndexMap[id] = 0; renderSequenceLibraryUI(); return;
+        if(macroTimeoutId) { clearTimeout(macroTimeoutId); macroTimeoutId = null; }
+        activeRunningId = null; isLibraryPaused = false; renderSequenceLibraryUI(); setStatus("Sequence Stopped."); return;
     }
-    if (actionType === 'pause') { isLibraryPaused = !isLibraryPaused; renderSequenceLibraryUI(); return; }
+    if (actionType === 'pause') { 
+        isLibraryPaused = !isLibraryPaused; 
+        renderSequenceLibraryUI(); 
+        if(!isLibraryPaused) { executeSequenceStep(id, currentStepIndexMap[id]); }
+        return; 
+    }
     if (actionType === 'run') {
-        stopAnyRunningSequence(); activeRunningId = id; isLibraryPaused = false; clearAllTimers(); renderSequenceLibraryUI();
-        let seqData = globalSequenceLibrary[id];
-        macroInterval = setInterval(() => {
-            if (isLibraryPaused) return;
-            let stepIndex = currentStepIndexMap[id] || 0;
-            executeHardwarePipeline(seqData.actions[stepIndex]);
-            stepIndex = (stepIndex + 1) % seqData.actions.length;
-            currentStepIndexMap[id] = stepIndex;
-        }, 2000);
+        stopAnyRunningSequence(); activeRunningId = id; isLibraryPaused = false; clearAllTimers();
+        currentStepIndexMap[id] = 0; renderSequenceLibraryUI();
+        executeSequenceStep(id, 0);
     }
 }
 
-function stopAnyRunningSequence() { if(macroInterval) { clearInterval(macroInterval); macroInterval = null; } activeRunningId = null; isLibraryPaused = false; renderSequenceLibraryUI(); }
+function executeSequenceStep(id, stepIndex) {
+    if (activeRunningId !== id || isLibraryPaused) return;
+    let seq = globalSequenceLibrary[id].actions;
+    if (stepIndex >= seq.length) stepIndex = 0; 
+    currentStepIndexMap[id] = stepIndex;
+
+    let currentStep = seq[stepIndex];
+    executeHardwarePipeline(currentStep.key);
+
+    let nextIndex = (stepIndex + 1) % seq.length;
+    let delayTime = seq[stepIndex].delayAfter || 2000; 
+
+    macroTimeoutId = setTimeout(() => {
+        executeSequenceStep(id, nextIndex);
+    }, delayTime);
+}
+
+function stopAnyRunningSequence() { if(macroTimeoutId) { clearTimeout(macroTimeoutId); macroTimeoutId = null; } activeRunningId = null; isLibraryPaused = false; renderSequenceLibraryUI(); }
 function deleteSequence(id) { if(activeRunningId === id) stopAnyRunningSequence(); delete globalSequenceLibrary[id]; delete currentStepIndexMap[id]; renderSequenceLibraryUI(); }
 
 async function initSerialPort() {
     try {
-        if (!("serial" in navigator)) { alert("Web Serial not supported."); return; }
+        if (!("serial" in navigator)) { alert("Web Serial not supported on this browser."); return; }
         const serialPort = await navigator.serial.requestPort();
         await serialPort.open({ baudRate: 115200 });
         const textEncoder = new TextEncoderStream(); textEncoder.readable.pipeTo(serialPort.writable);
         serialWriter = textEncoder.writable.getWriter();
-        document.getElementById("connectPortBtn").style.background = "#238636"; document.getElementById("connectPortBtn").textContent = "✅ Connected!";
+        document.getElementById("connectPortBtn").style.background = "#238636"; document.getElementById("connectPortBtn").textContent = "✅ Serial Connected / 串口并网就绪";
         setStatus("Serial Connected.");
     } catch (err) { setStatus("Failed: " + err.message); }
 }
@@ -254,14 +313,63 @@ function executeHardwarePipeline(actionKey) {
     if (POSES_DICTIONARY[keyStr]) {
         document.getElementById("hugeDisplay").textContent = EM_DISPLAY[keyStr] || keyStr;
         document.getElementById("poseTextDisplay").textContent = EM_TEXT_DISPLAY[keyStr] || "";
-        sendAnglesToESP32(POSES_DICTIONARY[keyStr][0], POSES_DICTIONARY[keyStr][1], POSES_DICTIONARY[keyStr][2], POSES_DICTIONARY[keyStr][3], POSES_DICTIONARY[keyStr][4]);
+        
+        startAngles = [...currentAngles];
+        targetAngles = [...POSES_DICTIONARY[keyStr]];
+        bezierStartTime = performance.now();
+        
+        if (bezierTimeoutId) clearTimeout(bezierTimeoutId);
+        bezierAnimationStep();
     }
 }
 
-function triggerDirect(action, label) {
+function bezierAnimationStep() {
+    let now = performance.now();
+    let totalDuration = parseInt(document.getElementById("slideDuration").value);
+    let stepDelay = parseInt(document.getElementById("slideStepDelay").value);
+    
+    let elapsed = now - bezierStartTime;
+    let t = Math.min(elapsed / totalDuration, 1);
+    
+    let p = t * t * (3 - 2 * t); 
+    
+    for (let i = 0; i < 5; i++) {
+        currentAngles[i] = Math.round(startAngles[i] + (targetAngles[i] - startAngles[i]) * p);
+    }
+    
+    sendAnglesToESP32(currentAngles[0], currentAngles[1], currentAngles[2], currentAngles[3], currentAngles[4]);
+    
+    if (t < 1) {
+        bezierTimeoutId = setTimeout(bezierAnimationStep, stepDelay);
+    } else {
+        bezierTimeoutId = null;
+    }
+}
+
+function triggerDirect(action) {
     let keyStr = String(action).trim();
-    if(isMacroRecording) { rehabMacroSequence.push(keyStr); }
+    if(isMacroRecording) { 
+        let now = Date.now();
+        let diff = now - lastActionTime;
+        if (rehabMacroSequence.length > 0) {
+            rehabMacroSequence[rehabMacroSequence.length - 1].delayAfter = diff;
+        }
+        rehabMacroSequence.push({ key: keyStr, delayAfter: 2000 });
+        lastActionTime = now;
+        document.getElementById("macroIndicator").textContent = `Captured: ${EM_DISPLAY[keyStr]} (Recorded ${rehabMacroSequence.length} actions)`;
+    }
     executeHardwarePipeline(keyStr); startAutoResetCountdown(); 
+}
+
+function sendTextMessage() {
+    stopAnyRunningSequence();
+    let txt = document.getElementById("textInput").value.trim();
+    if(!txt) return;
+    clearAllTimers();
+    document.getElementById("speechText").textContent = `"${txt}"`;
+    setStatus("AI thinking... / 智能解算中...");
+    askLLM(txt);
+    document.getElementById("textInput").value = "";
 }
 
 function initRecognition(){
@@ -276,23 +384,66 @@ function initRecognition(){
         }
         document.getElementById("speechText").textContent = `"${finalTranscript + interimTranscript}"`;
     };
-    recognition.onend = () => { document.getElementById("recordBtn").classList.remove("recording"); if(!isRecording && finalTranscript.trim() !== "") { askLLM(finalTranscript.trim()); } };
+    recognition.onend = () => { document.getElementById("recordBtn").classList.remove("recording"); if(!isRecording && finalTranscript.trim() !== "") { setStatus("AI thinking... / 智能解算中..."); askLLM(finalTranscript.trim()); } };
 }
 
 document.getElementById("recordBtn").addEventListener("click", () => { stopAnyRunningSequence(); if (isRecording) { isRecording = false; recognition.stop(); return; } clearAllTimers(); initRecognition(); try { recognition.start(); } catch(e){} });
-function emergencyStop() { stopAnyRunningSequence(); clearAllTimers(); document.getElementById("hugeDisplay").textContent = "🛑"; sendAnglesToESP32(0, 0, 0, 0, 0); }
+function emergencyStop() { stopAnyRunningSequence(); clearAllTimers(); if(bezierTimeoutId) clearTimeout(bezierTimeoutId); document.getElementById("hugeDisplay").textContent = "🛑"; currentAngles = [0,0,0,0,0]; sendAnglesToESP32(0, 0, 0, 0, 0); }
 
 async function askLLM(userText){
     let apiKey = document.getElementById("apiKey").value.trim(); 
     if(!apiKey) { apiKey = window.DEEPSEEK_API_KEY || ""; }
-    if(!apiKey){ return; }
-    const systemPrompt = `You are an expert intent translator for a 5-DOF robotic hand. Strict 0-6 output. CRITICAL MATH RULE: If mathematical question (e.g. "1+1"), solve it first and output raw answer code (e.g. "2"). Output raw JSON like {"ans":"2"}. No markdown.`;
+    if(!apiKey){ setStatus("❌ API Key Missing"); return; }
+    
+    const systemPrompt = `You are the empathetic, autonomous brain of an embodied soft robotic hand used in clinical rehabilitation and daily interactive companion scenarios.
+You DO NOT use rigid keyword matching. You THINK, FEEL human emotions, and CHOOSE gestures autonomously based on broad contextual meaning, vibes, or games.
+
+AVAILABLE PHYSICAL GESTURES CODE:
+"0" -> Fist / Closed Hand (Represents anger, power, or "Rock" in Rock-Paper-Scissors game)
+"1" -> Index finger pointing (Represents direction, attention, or item selection)
+"2" -> Victory gesture / Scissors (Represents peace, happiness, "Cheese" for taking photos, or "Scissors" in game)
+"3" -> Number 3 gesture
+"4" -> Number 4 gesture
+"5" -> Open Palm / Five fingers (Represents waving hello/goodbye, relaxation, high-five, or "Paper" in game)
+"6" -> Call-Me gesture (Thumb and pinky out)
+"7" -> Rock-on sign (Sign of horns)
+"8" -> Precision OK gesture
+"9" -> Thumbs Up gesture (Represents praise, excitement, agreement, saying "good/happy/perfect")
+
+BEHAVIOR AND REASONING RULES:
+1. HUMAN EMOTION & EXPRESSION: Analyze the vibe of the statement. If the user expresses happiness, celebration, or praise (e.g., "好开心", "I'm so excited", "Great job"), map it to "9" or "2". If they say "Let's take a photo" (一起拍照, cheese), map it to "2".
+2. AUTONOMOUS GAMES: If asked to play Rock-Paper-Scissors, choose "0", "2", or "5" based on your own random decision.
+3. MATH EXECUTIONS: Calculate any math problems first. If the answer is 0-6, return it.
+
+Output ONLY a raw JSON like {"ans":"9"}. Do not output any markdown code blocks or formatting.`;
+
     try{
-        const response = await fetch("https://api.deepseek.com/v1/chat/completions", { method:"POST", headers:{ "Content-Type":"application/json", "Authorization":"Bearer " + apiKey }, body:JSON.stringify({ model:"deepseek-chat", temperature:0.1, messages:[{ role:"system", content:systemPrompt }, { role:"user", content:userText }] }) });
+        // 🔥 核心升级：将 temperature 提高到 0.75 激发大模型的联想力，杜绝人工智障
+        const response = await fetch("https://api.deepseek.com/v1/chat/completions", { 
+            method:"POST", 
+            headers:{ "Content-Type":"application/json", "Authorization":"Bearer " + apiKey }, 
+            body:JSON.stringify({ 
+                model:"deepseek-chat", 
+                temperature:0.75, 
+                messages:[{ role:"system", content:systemPrompt }, { role:"user", content:userText }] 
+            }) 
+        });
         const data = await response.json(); let aiResponse = data.choices?.[0]?.message?.content?.trim().replace(/```json/g, "").replace(/```/g, "").trim();
         const parsed = JSON.parse(aiResponse);
-        if(parsed.hasOwnProperty('ans')) { executeHardwarePipeline(String(parsed.ans).trim()); startAutoResetCountdown(); }
-    }catch(err){}
+        if(parsed.hasOwnProperty('ans')) { 
+            let finalAns = String(parsed.ans).trim();
+            if(isMacroRecording) {
+                let now = Date.now();
+                let diff = now - lastActionTime;
+                if (rehabMacroSequence.length > 0) { rehabMacroSequence[rehabMacroSequence.length - 1].delayAfter = diff; }
+                rehabMacroSequence.push({ key: finalAns, delayAfter: 2000 });
+                lastActionTime = now;
+            }
+            executeHardwarePipeline(finalAns); 
+            setStatus("AI intent synchronized successfully.");
+            startAutoResetCountdown(); 
+        }
+    }catch(err){ setStatus("AI Engine analysis failed."); }
 }
 
 async function sendAnglesToESP32(p0, p1, p2, p3, p4){
@@ -300,7 +451,7 @@ async function sendAnglesToESP32(p0, p1, p2, p3, p4){
     try {
         const payloadStr = `{"p0":${p0},"p1":${p1},"p2":${p2},"p3":${p3},"p4":${p4}}\n`;
         await serialWriter.write(payloadStr);
-        document.getElementById("jsonPreview").textContent = `🚀 [Sent] -> ${payloadStr.trim()}`;
+        document.getElementById("jsonPreview").textContent = `🚀 [Bézier Stream Out] -> ${payloadStr.trim()}`;
     } catch (err) {}
 }
 window.onload = () => { renderSequenceLibraryUI(); };
