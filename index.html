@@ -84,9 +84,7 @@ input:focus{ border-color:#388bfd; box-shadow:0 0 10px rgba(56,139,253,0.3); }
         <div style="width:12px; height:12px; background:#39ff14; border-radius:50%; box-shadow:0 0 10px #39ff14;"></div>
         <h2 style="font-size:15px; letter-spacing:0.5px; font-weight: 900;">EMBODIED AI SOFT ROBOTICS CLIENT V9.5</h2>
     </div>
-    <div class="input-group">
-        <input id="apiKey" type="password" value="" placeholder="🔑 LLM API Key (Will be saved in your local browser sandbox safely)" oninput="localStorage.setItem('DEEPSEEK_SAVED_KEY', this.value)">
-    </div>
+
     <button id="connectPortBtn" onclick="initSerialPort()">🔌 Connect Type-C Wire / 连接数据线串口</button>
 </div>
 
@@ -429,34 +427,56 @@ function emergencyStop() { stopAnyRunningSequence(); clearAllTimers(); if(bezier
 
 // 🎤 大模型直连解算舱（完美闭合安全盲盒）
 async function askLLM(userText){
-    let apiKey = document.getElementById("apiKey").value.trim(); 
-    
-    if(!apiKey) { setStatus("❌ Missing API Key / 缺少密钥"); return; }
-    
-    const systemPrompt = `You are the brain of an autonomous embodied robotic hand. Your job is to analyze the user's intent and choose exactly ONE predefined action code from "0" to "9" that best fits the scenario or emotion. Action Map: "0":Fist, "1":Index, "2":Victory/"比个耶", "3":Num3, "4":Num4, "5":Open palm, "6":Call-Me, "7":Rock, "8":OK, "9":Thumbs Up. Behavior Rules: If rock-paper-scissors game is played, output 0, 2 or 5 randomly. If joy/praise is expressed, select 9 or 2. If user says "比个耶" or "take a photo", you MUST output "2". Output ONLY a raw JSON like {"ans":"2"}. No markdown blocks.`;
-
     try{
-        const response = await fetch("https://api.deepseek.com/v1/chat/completions", { 
-            method:"POST", 
-            headers:{ "Content-Type":"application/json", "Authorization":"Bearer " + apiKey }, 
-            body:JSON.stringify({ model:"deepseek-chat", temperature:0.7, messages:[{ role:"system", content:systemPrompt }, { role:"user", content:userText }] }) 
+        const response = await fetch("/api/chat", {
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify({
+                userText:userText
+            })
         });
-        const data = await response.json(); let aiResponse = data.choices?.[0]?.message?.content?.trim().replace(/```json/g, "").replace(/```/g, "").trim();
-        const parsed = JSON.parse(aiResponse);
-        if(parsed.hasOwnProperty('ans')) { 
-            let finalAns = String(parsed.ans).trim();
-            if(isMacroRecording) {
-                let now = Date.now(); let diff = now - lastActionTime;
-                if (rehabMacroSequence.length > 0) { rehabMacroSequence[rehabMacroSequence.length - 1].delayAfter = diff; }
-                rehabMacroSequence.push({ key: finalAns, delayAfter: 2000 }); lastActionTime = now;
-            }
-            executeHardwarePipeline(finalAns); 
-            setStatus("AI intent synchronized successfully.");
-            startAutoResetCountdown(); 
-        }
-    }catch(err){ setStatus("AI Engine analysis failed."); }
-}
 
+        const data = await response.json();
+
+        let aiResponse = data.choices?.[0]?.message?.content
+            ?.trim()
+            .replace(/```json/g,"")
+            .replace(/```/g,"")
+            .trim();
+
+        const parsed = JSON.parse(aiResponse);
+
+        if(parsed.hasOwnProperty('ans')){
+            let finalAns = String(parsed.ans).trim();
+
+            if(isMacroRecording){
+                let now = Date.now();
+                let diff = now - lastActionTime;
+
+                if(rehabMacroSequence.length > 0){
+                    rehabMacroSequence[rehabMacroSequence.length - 1].delayAfter = diff;
+                }
+
+                rehabMacroSequence.push({
+                    key: finalAns,
+                    delayAfter: 2000
+                });
+
+                lastActionTime = now;
+            }
+
+            executeHardwarePipeline(finalAns);
+            setStatus("AI intent synchronized successfully.");
+            startAutoResetCountdown();
+        }
+
+    }catch(err){
+        console.error(err);
+        setStatus("AI Engine analysis failed.");
+    }
+}
 async function sendAnglesToESP32(p0, p1, p2, p3, p4){
     if (!serialWriter) return;
     try {
@@ -468,10 +488,8 @@ async function sendAnglesToESP32(p0, p1, p2, p3, p4){
 
 // 🔐 网页初始化：自动恢复本浏览器沙盒里存的密码
 window.onload = () => { 
-    renderSequenceLibraryUI(); 
-    let savedKey = localStorage.getItem('DEEPSEEK_SAVED_KEY');
-    if(savedKey) { document.getElementById("apiKey").value = savedKey; }
-    syncSlidersFromCurrentAngles(); 
+    renderSequenceLibraryUI();
+    syncSlidersFromCurrentAngles();
 };
 </script>
 </body>
