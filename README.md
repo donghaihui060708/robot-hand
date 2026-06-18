@@ -38,35 +38,23 @@ The goal of the project is to combine soft robotics, embedded systems, wireless 
 
 
 
-\---
-
 
 
 <h1>1. ✨ Features</h1>
 
 
 
-\* Real-time finger control
-
-\* Independent control of all five fingers
-
-\* Preset hand gestures
-
-\* AI voice command interaction
-
-\* Natural language understanding
-
-\* BLE communication
-
-\* USB serial communication
-
-\* ESP-NOW wireless transmission
-
-\* Modern web-based dashboard
+* Real-time finger control
+* Independent control of all five fingers
+* Preset hand gestures
+* AI voice command interaction
+* Natural language understanding
+* BLE communication
+* USB serial communication
+* ESP-NOW wireless transmission
+* Modern web-based dashboard
 
 
-
-\---
 
 
 
@@ -74,51 +62,9 @@ The goal of the project is to combine soft robotics, embedded systems, wireless 
 
 
 
-```text
-
-Web Interface
-
-&#x20;     │
-
-&#x20;BLE / USB
-
-&#x20;     │
-
-&#x20;     ▼
-
-ESP32 Transmitter
-
-&#x20;     │
-
-&#x20;  ESP-NOW
-
-&#x20;     │
-
-&#x20;     ▼
-
-ESP32 Receiver
-
-&#x20;     │
-
-&#x20;  PCA9685
-
-&#x20;     │
-
-&#x20;Servo Motors
-
-&#x20;     │
-
-Soft Robotic Hand
-
-```
-
-
-
 The web dashboard sends control commands to the ESP32 transmitter through either BLE or USB communication. Commands are then transmitted wirelessly via ESP-NOW to the receiver ESP32, which drives the servo motors through a PCA9685 controller to actuate the silicone robotic hand.
 
 
-
-\---
 
 
 
@@ -128,21 +74,14 @@ The web dashboard sends control commands to the ESP32 transmitter through either
 
 
 
-\* Seeed Studio XIAO ESP32S3
-
-\* PCA9685 Servo Driver
-
-\* 5 Servo Motors
-
-\* Tendon-driven Mechanism
-
-\* Silicone Soft Robotic Hand
-
-\* USB Type-C Communication
+* Seeed Studio XIAO ESP32S3
+* PCA9685 Servo Driver
+* 5 Servo Motors
+* Tendon-driven Mechanism
+* Silicone Soft Robotic Hand
+* USB Type-C Communication
 
 
-
-\---
 
 
 
@@ -152,41 +91,15 @@ The web dashboard sends control commands to the ESP32 transmitter through either
 
 
 
-\### Frontend
+* Frontend: HTML5, CSS3 and JavaScript
 
 
 
-\* HTML5
-
-\* CSS3
-
-\* JavaScript
+* Embedded Systems: Arduino IDE, ESP32, ESP-NOW and BLE
 
 
 
-\### Embedded Systems
-
-
-
-\* Arduino IDE
-
-\* ESP32
-
-\* ESP-NOW
-
-\* BLE
-
-
-
-\### AI Integration
-
-
-
-\* DeepSeek API
-
-
-
-\---
+* AI Integration: DeepSeek API
 
 
 
@@ -212,10 +125,6 @@ robot-hand/
 
 
 
-\---
-
-
-
 <h1>6. 📸 Demonstration</h1>
 
 
@@ -230,15 +139,11 @@ Project photos, videos and additional demonstrations will be added as developmen
 
 
 
-\---
-
-
-
 <h1>7. 👨‍💻 Author</h1>
 
 
 
-Haihui Dong
+Dong Haihui 
 
 
 
@@ -253,10 +158,6 @@ Diploma in Electronics
 GitHub:
 
 https://github.com/donghaihui060708
-
-
-
-\---
 
 
 
