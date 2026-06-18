@@ -26,7 +26,7 @@ English | <a href="./README\_CN.md">中文</a>
 
 
 
-\# 0. 📖 Introduction
+<h1>0. 📖 Introduction</h1>
 
 
 
@@ -42,7 +42,7 @@ The goal of the project is to combine soft robotics, embedded systems, wireless 
 
 
 
-\# 1. ✨ Features
+<h1>1. ✨ Features</h1>
 
 
 
@@ -70,7 +70,7 @@ The goal of the project is to combine soft robotics, embedded systems, wireless 
 
 
 
-\# 2. 🏗 System Architecture
+<h1>2. 🏗 System Architecture</h1>
 
 
 
@@ -122,7 +122,9 @@ The web dashboard sends control commands to the ESP32 transmitter through either
 
 
 
-\# 3. 🔧 Hardware
+<h1>3. 🔧 Hardware</h1>
+
+&#x20;Hardware
 
 
 
@@ -144,7 +146,9 @@ The web dashboard sends control commands to the ESP32 transmitter through either
 
 
 
-\# 4. 💻 Software Stack
+<h1>4. 💻 Software Stack</h1>
+
+
 
 
 
@@ -186,7 +190,7 @@ The web dashboard sends control commands to the ESP32 transmitter through either
 
 
 
-\# 5. 📂 Project Structure
+<h1>5. 📂 Project Structure</h1>
 
 
 
@@ -212,7 +216,7 @@ robot-hand/
 
 
 
-\# 6. 📸 Demonstration
+<h1>6. 📸 Demonstration</h1>
 
 
 
@@ -230,7 +234,7 @@ Project photos, videos and additional demonstrations will be added as developmen
 
 
 
-\# 8. 👨‍💻 Author
+<h1>7. 👨‍💻 Author</h1>
 
 
 
@@ -256,7 +260,7 @@ https://github.com/donghaihui060708
 
 
 
-\# 9. 📌 Copyright
+<h1>8. 📌 Copyright</h1>
 
 
 
