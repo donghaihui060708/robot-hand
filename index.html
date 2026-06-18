@@ -584,8 +584,29 @@ BEHAVIOR RULES:
 - If the user expresses joy or praise, select "9" or "2".
 - If the user says "比个耶" or "take a photo / 拍照", you MUST output "2".
 
-Output ONLY a raw JSON like {"ans":"2"}. Do not output markdown code blocks or any other explanation.`;
+CUSTOM MOTION RULE:
+- If the user asks for 手指操, finger exercise, rehabilitation exercise, hand dance, continuous motion, custom motion, warm up fingers, or finger training, output custom_sequence mode.
+- Generate a natural progressive wave motion.
+- Gradually curl from open hand to fist.
+- Then gradually open back to relaxed hand.
+- Use smooth angle transitions.
+- Do not jump directly from 0 to 180.
+- Avoid strange or unsafe poses.
+- Use 10-20 steps.
+- Angle range must stay between 0 and 180.
+- Use delay between 150 and 350 ms.
+- Hold 500-800 ms at full fist and full open.
 
+Output format:
+
+Single action:
+{"mode":"single","ans":"2"}
+
+Custom sequence:
+{"mode":"custom_sequence","actions":[
+{"angles":[0,0,0,0,0],"delay":300},
+{"angles":[20,0,0,0,0],"delay":200}
+]}
     try{
         const response = await fetch("/api/chat", { 
             method:"POST", 
@@ -607,7 +628,36 @@ Output ONLY a raw JSON like {"ans":"2"}. Do not output markdown code blocks or a
         });
         const data = await response.json(); let aiResponse = data.choices?.[0]?.message?.content?.trim().replace(/```json/g, "").replace(/```/g, "").trim();
         const parsed = JSON.parse(aiResponse);
-        if(parsed.hasOwnProperty('ans')) { 
+
+	if(parsed.mode === "custom_sequence" && Array.isArray(parsed.actions)) {
+
+    		stopAnyRunningSequence();
+    		clearAllTimers();
+
+    		let seqId = "ai_custom_" + Date.now();
+
+    		globalSequenceLibrary[seqId] = {
+        		name: "AI Generated Motion",
+        		actions: parsed.actions.map(item => ({
+            			isCustomAngles: true,
+            			angles: item.angles,
+            			label: "AI Motion",
+            			delayAfter: item.delay || 200
+        		}))
+    		};
+
+    		activeRunningId = seqId;
+   		isLibraryPaused = false;
+    		currentStepIndexMap[seqId] = 0;
+
+    		renderSequenceLibraryUI();
+    		executeSequenceStep(seqId, 0);
+
+    		setStatus("AI custom motion running.");
+    		return;
+	}
+
+	if(parsed.hasOwnProperty('ans')) { 
             let finalAns = String(parsed.ans).trim();
             if(isMacroRecording) {
                 let now = Date.now(); let diff = now - lastActionTime;
