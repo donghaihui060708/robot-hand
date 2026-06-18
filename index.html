@@ -11,8 +11,14 @@ body{ background:#0a0f1d; color:#e6edf3; min-height:100vh; display:flex; flex-di
 .input-group{ flex:1; max-width: 400px; }
 input{ width:100%; background:#0d1117; border:1px solid #30363d; color:white; padding:12px 15px; border-radius:8px; outline:none; font-size: 13px; }
 input:focus{ border-color:#388bfd; box-shadow:0 0 10px rgba(56,139,253,0.3); }
-#connectPortBtn { background: linear-gradient(145deg,#1f6feb,#388bfd); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 13px; }
-#connectPortBtn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(56,139,253,0.4); }
+#connectPortBtn,
+#connectBLEBtn,
+#disconnectPortBtn,
+#disconnectBLEBtn { background: linear-gradient(145deg,#1f6feb,#388bfd); color: white; padding: 12px 24px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: all 0.2s; font-size: 13px; }
+#connectPortBtn:hover,
+#connectBLEBtn:hover,
+#disconnectPortBtn:hover,
+#disconnectBLEBtn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(56,139,253,0.4); }
 .main-container { width: 100%; max-width: 1000px; display: flex; flex-direction: column; gap: 20px; padding: 0 20px; }
 .panel { background: #111827; border: 1px solid #1f2937; border-radius: 15px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
 .panel-title { font-size: 13px; color: #388bfd; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 1.5px; border-bottom: 1px solid #1f2937; padding-bottom: 8px; }
@@ -85,10 +91,13 @@ input:focus{ border-color:#388bfd; box-shadow:0 0 10px rgba(56,139,253,0.3); }
         <h2 style="font-size:15px; letter-spacing:0.5px; font-weight: 900;">EMBODIED AI SOFT ROBOTICS CLIENT V8.5</h2>
     </div>
     <div class="input-group">
-        <input id="apiKey" type="password" value="" placeholder="LLM API Key (Or injected by cloud Vercel)">
+        <input id="apiKey" type="password" disabled value="Connected via Vercel">
     </div>
-    <button id="connectPortBtn" onclick="initSerialPort()">🔌 Connect Type-C Wire / 连接数据线串口</button>
-</div>
+    <button id="connectPortBtn" onclick="initSerialPort()">🔌 Connect Type-C</button>
+    <button id="disconnectPortBtn" onclick="disconnectSerial()">❌ Disconnect Type-C</button>
+    <button id="connectBLEBtn" onclick="initBLE()">🔵 Connect BLE</button>
+    <button id="disconnectBLEBtn" onclick="disconnectBLE()">❌ Disconnect BLE</button>
+    </div>
 
 <div class="main-container">
     <div class="panel">
@@ -206,7 +215,23 @@ const EM_TEXT_DISPLAY = {
     "7": "Rock / 摇滚", "8": "Precision OK / OK", "9": "Thumbs Up / 点赞"
 };
 
-let recognition, isRecording = false, finalTranscript = "", serialWriter = null, currentSTTLanguage = "zh-CN";
+let recognition, isRecording = false, finalTranscript = "", currentSTTLanguage = "zh-CN";
+let serialPort = null;
+let serialWriter = null;
+let serialWritableClosed = null;
+let serialDisconnecting = false;
+let bleDevice = null;
+let bleServer = null;
+let bleCharacteristic = null;
+let bleWriteBusy = false;
+let bleLastSendTime = 0;
+
+const BLE_SERVICE_UUID =
+"12345678-1234-1234-1234-1234567890ab";
+
+const BLE_CHARACTERISTIC_UUID =
+"abcd1234-5678-90ab-cdef-1234567890ab";
+
 let autoResetTimeout = null, countdownInterval = null, secondsRemaining = 0;
 
 let isMacroRecording = false, rehabMacroSequence = [], globalSequenceLibrary = {}, activeRunningId = null, isLibraryPaused = false, currentStepIndexMap = {}, macroTimeoutId = null;
@@ -354,16 +379,128 @@ function deleteSequence(id) { if(activeRunningId === id) stopAnyRunningSequence(
 
 async function initSerialPort() {
     try {
-        if (!("serial" in navigator)) { alert("Web Serial not supported on this browser."); return; }
-        const serialPort = await navigator.serial.requestPort();
+        if (!("serial" in navigator)) {
+            alert("Web Serial not supported on this browser.");
+            return;
+        }
+
+        serialPort = await navigator.serial.requestPort();
         await serialPort.open({ baudRate: 115200 });
-        const textEncoder = new TextEncoderStream(); textEncoder.readable.pipeTo(serialPort.writable);
+
+        const textEncoder = new TextEncoderStream();
+        serialWritableClosed = textEncoder.readable.pipeTo(serialPort.writable);
         serialWriter = textEncoder.writable.getWriter();
-        document.getElementById("connectPortBtn").style.background = "#238636"; document.getElementById("connectPortBtn").textContent = "✅ Serial Connected / 串口并网就绪";
+
+        document.getElementById("connectPortBtn").style.background = "#238636";
+        document.getElementById("connectPortBtn").textContent =
+            "✅ Type-C Connected";
+
         setStatus("Serial Connected.");
-    } catch (err) { setStatus("Failed: " + err.message); }
+    } catch (err) {
+        setStatus("Failed: " + err.message);
+    }
+}
+async function initBLE() {
+
+    try {
+
+        bleDevice =
+        await navigator.bluetooth.requestDevice({
+            filters: [
+                {
+                    name: "RobotHand_BLE"
+                }
+            ],
+            optionalServices: [
+                BLE_SERVICE_UUID
+            ]
+        });
+
+        bleServer =
+        await bleDevice.gatt.connect();
+
+        const service =
+        await bleServer.getPrimaryService(
+            BLE_SERVICE_UUID
+        );
+
+        bleCharacteristic =
+        await service.getCharacteristic(
+            BLE_CHARACTERISTIC_UUID
+        );
+
+        const bleBtn =
+	document.getElementById("connectBLEBtn");
+
+	bleBtn.textContent =
+	"✅ BLE Connected";
+
+	bleBtn.style.background =
+	"linear-gradient(145deg,#238636,#2ea043)";
+
+	setStatus(
+    	"BLE connected successfully."
+	);
+
+    }
+    catch(err){
+
+        setStatus(
+            "BLE connect failed: "
+            + err.message
+        );
+
+    }
+}
+async function disconnectBLE() {
+    try {
+        if (bleDevice && bleDevice.gatt.connected) {
+            bleDevice.gatt.disconnect();
+        }
+
+        bleDevice = null;
+        bleServer = null;
+        bleCharacteristic = null;
+
+	const bleBtn =
+	document.getElementById("connectBLEBtn");
+
+	bleBtn.textContent =
+	"🔵 Connect BLE";
+
+	bleBtn.style.background =
+	"linear-gradient(145deg,#1f6feb,#388bfd)";
+
+        setStatus("BLE disconnected.");
+    } catch (err) {
+        setStatus("BLE disconnect failed: " + err.message);
+    }
 }
 
+async function disconnectSerial() {
+    try {
+        if (serialWriter) {
+            await serialWriter.close();
+            await serialWritableClosed;
+            serialWriter = null;
+            serialWritableClosed = null;
+        }
+
+        if (serialPort) {
+            await serialPort.close();
+            serialPort = null;
+        }
+
+        document.getElementById("connectPortBtn").textContent =
+            "🔌 Connect Type-C";
+	document.getElementById("connectPortBtn").style.background =
+    		"linear-gradient(145deg,#1f6feb,#388bfd)";
+
+        setStatus("Type-C disconnected.");
+    } catch (err) {
+        setStatus("Type-C disconnect failed: " + err.message);
+    }
+}
 function setStatus(msg){ document.getElementById("status").textContent = msg; }
 
 function executeHardwarePipeline(actionKey) {
@@ -421,13 +558,7 @@ document.getElementById("recordBtn").addEventListener("click", () => { stopAnyRu
 function emergencyStop() { stopAnyRunningSequence(); clearAllTimers(); if(bezierTimeoutId) clearTimeout(bezierTimeoutId); document.getElementById("hugeDisplay").textContent = "🛑"; currentAngles = [0,0,0,0,0]; syncSlidersFromCurrentAngles(); sendAnglesToESP32(0, 0, 0, 0, 0); }
 
 // 🤖 大模型核心交互解算引擎（已精准补全数学计算铁律）
-async function askLLM(userText){
-    let apiKey = document.getElementById("apiKey").value.trim(); 
-    if(!apiKey) { 
-        apiKey = "process.env.DEEPSEEK_API_KEY" || window.DEEPSEEK_API_KEY || ""; 
-    }
-    if(!apiKey || apiKey.startsWith("process.env")){ setStatus("❌ API Key Missing"); return; }
-    
+async function askLLM(userText){    
     // 🧠 核心修复：将数学优先执行铁律无损织入 V8.5 系统提示词中
     const systemPrompt = `You are the brain of an autonomous embodied robotic hand.
 Your job is to analyze the user's intent and choose exactly ONE predefined action code from "0" to "9" that best fits the scenario or emotion.
@@ -455,9 +586,9 @@ BEHAVIOR RULES:
 Output ONLY a raw JSON like {"ans":"2"}. Do not output markdown code blocks or any other explanation.`;
 
     try{
-        const response = await fetch("https://api.deepseek.com/v1/chat/completions", { 
+        const response = await fetch("/api/chat", { 
             method:"POST", 
-            headers:{ "Content-Type":"application/json", "Authorization":"Bearer " + apiKey }, 
+            headers:{ "Content-Type":"application/json" }, 
             body:JSON.stringify({ 
                 model:"deepseek-chat", 
                 temperature:0.7, 
@@ -480,13 +611,54 @@ Output ONLY a raw JSON like {"ans":"2"}. Do not output markdown code blocks or a
     }catch(err){ setStatus("AI Engine analysis failed."); }
 }
 
-async function sendAnglesToESP32(p0, p1, p2, p3, p4){
-    if (!serialWriter) return;
+async function sendAnglesToESP32(p0, p1, p2, p3, p4) {
+
+    const payloadStr = JSON.stringify({ p0, p1, p2, p3, p4 });
+
     try {
-        const payloadStr = `{"p0":${p0},"p1":${p1},"p2":${p2},"p3":${p3},"p4":${p4}}\n`;
-        await serialWriter.write(payloadStr);
-        document.getElementById("jsonPreview").textContent = `🚀 [Bézier Stream Out] -> ${payloadStr.trim()}`;
-    } catch (err) {}
+
+        // Type-C 不限速，直接发
+        if (serialWriter) {
+            await serialWriter.write(payloadStr + "\n");
+
+            document.getElementById("jsonPreview").textContent =
+            "🚀 Serial -> " + payloadStr;
+
+            return;
+        }
+
+        // 只有 BLE 才限速
+        if (bleCharacteristic) {
+            const now = Date.now();
+
+            if (now - bleLastSendTime < 50) {
+                return;
+            }
+
+            if (bleWriteBusy) {
+                return;
+            }
+
+            bleWriteBusy = true;
+            bleLastSendTime = now;
+
+            const encoder = new TextEncoder();
+            await bleCharacteristic.writeValue(encoder.encode(payloadStr));
+
+            bleWriteBusy = false;
+
+            document.getElementById("jsonPreview").textContent =
+            "🔵 BLE -> " + payloadStr;
+
+            return;
+        }
+
+        setStatus("Please connect Type-C or BLE.");
+
+    } catch (err) {
+        bleWriteBusy = false;
+        setStatus("Send failed: " + err.message);
+    }
 }
 window.onload = () => { renderSequenceLibraryUI(); syncSlidersFromCurrentAngles(); };
 </script>
