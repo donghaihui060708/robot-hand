@@ -1,28 +1,16 @@
-<p align="center">
-
-&#x20; <h1 align="center">🤖 Embodied AI Soft Robotic Hand</h1>
-
-</p>
-
-
+<h1 align="center">🤖 Embodied AI Soft Robotic Hand</h1>
 
 <p align="center">
-
 A tendon-driven silicone robotic hand controlled by ESP32, Web Interface and AI Voice Commands.
-
 </p>
-
-
 
 <p align="center">
-
-English | <a href="./README\_CN.md">中文</a>
-
+English | <a href="./README_CN.md">中文</a>
 </p>
+<hr>
 
 
-
-\---
+\
 
 
 

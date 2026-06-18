@@ -1,29 +1,14 @@
-<p align="center">
-
-&#x20; <h1 align="center">🤖 Embodied AI 机器人硅胶手</h1>
-
-</p>
-
-
+<h1 align="center">🤖 Embodied AI 机器人硅胶手</h1>
 
 <p align="center">
-
 基于 ESP32、网页控制界面与 AI 语音指令的线驱动硅胶机器人手系统
-
 </p>
-
-
 
 <p align="center">
-
 <a href="./README.md">English</a> | 中文
-
 </p>
 
-
-
-\---
-
+<hr>
 
 
 <h1>0. 📖 项目简介</h1>
